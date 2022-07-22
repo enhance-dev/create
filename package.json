@@ -1,0 +1,11 @@
+{
+  "name": "@enhance/create",
+  "version": "1.0.0",
+  "main": "index.mjs",
+  "bin": {
+    "enhance-create": "./index.mjs"
+  },
+  "dependencies": {
+    "@enhance/starter-project": "^1.0.1"
+  }
+}
