@@ -2,6 +2,9 @@
   "name": "@enhance/create",
   "version": "1.0.0",
   "main": "index.mjs",
+  "scripts": {
+    "vendor": "rm -rf vendor && cp -r node_modules/@enhance/starter-project vendor && rm -rf vendor/.github"
+  },
   "bin": {
     "enhance-create": "./index.mjs"
   },

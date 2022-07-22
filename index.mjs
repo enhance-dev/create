@@ -13,10 +13,9 @@ if (!path) {
 
 // copy the starter project to the given path
 const here = dirname(fileURLToPath(import.meta.url))
-const src = join(here, 'node_modules', '@enhance', 'starter-project')
+const src = join(here, 'vendor')
 const dist = join(process.cwd(), path)
 
 // FIXME pretty sure this won't work on windows! 
-shell(`mkdir -p ${dist}`)
+// shell(`mkdir -p ${dist}`)
 shell(`cp -r ${src}/ ${dist}`)
-shell(`rm -rf ${dist}/.github`)
