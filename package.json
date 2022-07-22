@@ -1,6 +1,6 @@
 {
   "name": "@enhance/create",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.mjs",
   "scripts": {
     "vendor": "rm -rf vendor && cp -r node_modules/@enhance/starter-project vendor && rm -rf vendor/.github"
