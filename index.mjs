@@ -1,21 +1,35 @@
 #!/usr/bin/env node
-import { execSync as shell } from 'child_process'
+import { cp } from 'node:fs/promises'
+import { existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
+import { success, failure } from './console.mjs'
 
-// ensure the path arg was passed
-let args = process.argv.slice(2, process.argv.length)
-let path = args[0]
-if (!path) {
-  console.error('Missing path.')
-  process.exit(1)
-}
+const args = process.argv.slice(2, process.argv.length)
+const path = args[0]
 
-// copy the starter project to the given path
-const here = dirname(fileURLToPath(import.meta.url))
-const src = join(here, 'vendor')
-const dist = join(process.cwd(), path)
+;(async function main () {
+  try {
+    // ensure the path arg was passed
+    if (!path) {
+      throw Error('Missing path.')
+    }
 
-// FIXME pretty sure this won't work on windows! 
-// shell(`mkdir -p ${dist}`)
-shell(`cp -r ${src}/ ${dist}`)
+    const here = dirname(fileURLToPath(import.meta.url))
+    const src = join(here, 'vendor')
+    const dest = join(process.cwd(), path)
+
+    if (existsSync(dest)) {
+      throw Error('Path already exists.')
+    }
+
+    // copy the starter project to the given path
+    await cp(src, dest, { recursive: true })
+
+    success({ path, dest })
+  }
+  catch (e) {
+    failure({ path, message: e.message })
+    process.exit(1)
+  }
+})();
