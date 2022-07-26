@@ -10,6 +10,12 @@ const path = args[0]
 
 ;(async function main () {
   try {
+    // ensure node 16 or higher
+    let v = Number(process.versions.node.split('.')[0]) 
+    if (v < 16) {
+      throw Error(`Invalid version of Node. Found ${ v } but expected 16 or higher.`)
+    }
+
     // ensure the path arg was passed
     if (!path) {
       throw Error('Missing path.')

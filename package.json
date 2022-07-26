@@ -3,12 +3,12 @@
   "version": "1.0.2",
   "main": "index.mjs",
   "scripts": {
-    "vendor": "rm -rf vendor && cp -r node_modules/@enhance/starter-project vendor && rm -rf vendor/.github"
+    "vendor": "./scripts/vendor.sh"
   },
   "bin": {
     "enhance-create": "./index.mjs"
   },
   "dependencies": {
-    "@enhance/starter-project": "^1.0.1"
+    "@enhance/starter-project": "^1.0.4"
   }
 }
