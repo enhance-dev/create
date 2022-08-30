@@ -1,6 +1,6 @@
 {
   "name": "@enhance/create",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "main": "index.mjs",
   "scripts": {
     "vendor": "./scripts/vendor.sh"
