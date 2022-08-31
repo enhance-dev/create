@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { cp } from 'node:fs/promises'
+import { cp, rename } from 'node:fs/promises'
 import { existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
@@ -11,7 +11,7 @@ const path = args[0]
 ;(async function main () {
   try {
     // ensure node 16 or higher
-    let v = Number(process.versions.node.split('.')[0]) 
+    let v = Number(process.versions.node.split('.')[0])
     if (v < 16) {
       throw Error(`Invalid version of Node. Found ${ v } but expected 16 or higher.`)
     }
@@ -31,6 +31,9 @@ const path = args[0]
 
     // copy the starter project to the given path
     await cp(src, dest, { recursive: true })
+
+    // move the ignore file into place
+    await rename(join(dest, '_.gitignore'), join(dest, '.gitignore'))
 
     success({ path, dest })
   }
