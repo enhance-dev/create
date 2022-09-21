@@ -2,9 +2,7 @@
   "name": "@enhance/create",
   "version": "1.0.12",
   "main": "index.mjs",
-  "scripts": {
-    "vendor": "./scripts/vendor.sh"
-  },
+  "scripts": {},
   "bin": {
     "enhance-create": "./index.mjs"
   },

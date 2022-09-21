@@ -1,12 +1,17 @@
 #!/usr/bin/env node
 import { cp, rename } from 'node:fs/promises'
-import { existsSync } from 'fs'
-import { join, dirname } from 'path'
+import { existsSync, readFileSync, writeFileSync } from 'fs'
+import { join, dirname, sep } from 'path'
 import { fileURLToPath } from 'url'
 import { success, failure } from './console.mjs'
 
 const args = process.argv.slice(2, process.argv.length)
 const path = args[0]
+
+function shortenPath (filePath) {
+  let packageName = `@enhance${sep}starter-project${sep}`
+  return filePath.substring(filePath.lastIndexOf(packageName) + packageName.length)
+}
 
 ;(async function main () {
   try {
@@ -22,18 +27,35 @@ const path = args[0]
     }
 
     const here = dirname(fileURLToPath(import.meta.url))
-    const src = join(here, 'vendor')
+    const src = join(here, 'node_modules/@enhance/starter-project')
     const dest = join(process.cwd(), path)
 
     if (existsSync(dest)) {
       throw Error('Path already exists.')
     }
 
-    // copy the starter project to the given path
-    await cp(src, dest, { recursive: true })
+    let starterProjectManifest = JSON.parse(readFileSync(join(src, "manifest.json")))
+
+    // Create starter files
+    starterProjectManifest.fileList.forEach(async file => {
+      let filename = shortenPath(file)
+      await cp(join(src, filename), join(dest, filename), { recursive: true })
+    })
 
     // move the ignore file into place
-    await rename(join(dest, '_.gitignore'), join(dest, '.gitignore'))
+    await cp(join(src, '.npmignore'), join(dest, '.gitignore'))
+
+    // copy .arc file into place
+    await cp(join(src, '.arc'), join(dest, '.arc'))
+
+    // package.json
+    let pkg = JSON.parse(readFileSync(join(src, 'package.json')))
+
+    delete pkg.name
+    delete pkg.version
+    delete pkg.scripts.postinstall
+
+    writeFileSync(join(dest, 'package.json'), JSON.stringify(pkg, null, 2))
 
     success({ path, dest })
   }
