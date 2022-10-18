@@ -9,6 +9,6 @@
     "enhance-create": "./index.mjs"
   },
   "dependencies": {
-    "@enhance/starter-project": "^1.1.0"
+    "@enhance/starter-project": "^2.0.0"
   }
 }
