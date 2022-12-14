@@ -8,6 +8,7 @@ import { success, failure } from './console.mjs'
 const args = process.argv.slice(2, process.argv.length)
 const path = args[0]
 
+// wrap top-level async in case consumer has Node < 14.8
 ;(async function main () {
   try {
     // ensure node 16 or higher
@@ -31,6 +32,12 @@ const path = args[0]
 
     // copy the starter project to the given path
     await cp(src, dest, { recursive: true })
+
+    // TODO: infer name from path
+    // TODO: rename @app in .arc
+    // TODO: set name in package.json
+
+    // TODO: install dependencies at specific versions instead of "latest"
 
     // move the ignore file into place
     await rename(join(dest, '_.gitignore'), join(dest, '.gitignore'))
