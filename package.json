@@ -7,7 +7,7 @@
     "vendor": "./scripts/vendor.sh"
   },
   "bin": {
-    "enhance-create": "./index.mjs"
+    "enhance-create": "./index.js"
   },
   "dependencies": {
     "@enhance/starter-project": "^3.3.1"
