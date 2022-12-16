@@ -3,7 +3,7 @@ import { cp, rename } from 'node:fs/promises'
 import { existsSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
-import { success, failure } from './console.mjs'
+import { success, failure } from './console.js'
 
 const args = process.argv.slice(2, process.argv.length)
 const path = args[0]
@@ -12,7 +12,7 @@ const path = args[0]
 ;(async function main () {
   try {
     // ensure node 16 or higher
-    let v = Number(process.versions.node.split('.')[0])
+    const v = Number(process.versions.node.split('.')[0])
     if (v < 16) {
       throw Error(`Invalid version of Node. Found ${ v } but expected 16 or higher.`)
     }

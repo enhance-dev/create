@@ -1,7 +1,7 @@
-let path = require('path')
-let fs = require('fs')
-let pathToPkg = path.join(__dirname, '..', 'vendor', 'package.json')
-let pkg = require(pathToPkg)
+const path = require('path')
+const fs = require('fs')
+const pathToPkg = path.join(__dirname, '..', 'vendor', 'package.json')
+const pkg = require(pathToPkg)
 
 delete pkg.name
 delete pkg.version
