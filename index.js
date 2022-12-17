@@ -1,50 +1,36 @@
 #!/usr/bin/env node
 // executed in userland
-import {
-  cpSync,
-  existsSync,
-  readFileSync,
-  writeFileSync,
-} from 'node:fs'
+import { cpSync, existsSync, readFileSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { join, dirname } from 'node:path'
 import process from 'node:process'
-import { success, failure } from './console.js'
+
+import { failure, success } from './console.js'
 
 const require = createRequire(import.meta.url)
+const here = dirname(fileURLToPath(import.meta.url))
+const template = join(here, 'template')
 const args = process.argv.slice(2, process.argv.length)
 const path = args[0]
 
+if (!path) {
+  throw Error('Missing path. Pass a pathname to create a new project.')
+}
+
+const dest = join(process.cwd(), path)
+const appName = path.trim().split('/').at(-1) || 'my-enhance-app'
+
 try {
-  // ensure node 16 or higher
-  const v = Number(process.versions.node.split('.')[0])
-  if (v < 16) {
-    throw Error(`Invalid version of Node. Found ${v} but expected 16 or higher.`)
-  }
-
-  // ensure the path arg was passed
-  if (!path) {
-    throw Error('Missing path.')
-  }
-
-  const here = dirname(fileURLToPath(import.meta.url))
-  const template = join(here, 'template')
-  const dest = join(process.cwd(), path)
-  const appName = path.trim().split('/').at(-1) || 'my-enhance-app'
-
   if (existsSync(dest)) {
     throw Error('Path already exists.')
   }
 
-  // copy the starter project to the given path
   cpSync(template, dest, { recursive: true })
 
-  // update package.json
   const pkgFile = require(join(dest, 'package.json'))
   pkgFile.name = appName
   pkgFile.version = '0.0.1'
-  // specify package.json key order
   const newPkgFile = Object.assign(
     {
       name: null,
@@ -60,7 +46,6 @@ try {
     JSON.stringify(newPkgFile, null, 2),
   )
 
-  // update .arc file
   const arcFile = readFileSync(join(dest, '.arc'), 'utf8')
     .toString()
     .replace('myproj', appName)
