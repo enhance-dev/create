@@ -4,20 +4,17 @@ import {
   cpSync,
   existsSync,
   readFileSync,
-  // renameSync,
   writeFileSync,
 } from 'node:fs'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
-import { join, dirname, sep } from 'node:path'
+import { join, dirname } from 'node:path'
 import process from 'node:process'
-
 import { success, failure } from './console.js'
 
 const require = createRequire(import.meta.url)
 const args = process.argv.slice(2, process.argv.length)
 const path = args[0]
-
 
 try {
   // ensure node 16 or higher
@@ -34,7 +31,7 @@ try {
   const here = dirname(fileURLToPath(import.meta.url))
   const template = join(here, 'template')
   const dest = join(process.cwd(), path)
-  const appName = path.replace(sep, '-')
+  const appName = path.trim().split('/').at(-1) || 'my-enhance-app'
 
   if (existsSync(dest)) {
     throw Error('Path already exists.')
@@ -68,10 +65,6 @@ try {
     .toString()
     .replace('myproj', appName)
   writeFileSync(join(dest, '.arc'), arcFile)
-
-  // move the ignore file into place
-  // ! currently "starter-project" doesn't have a .gitignore or _.gitignore
-  // renameSync(join(dest, '_.gitignore'), join(dest, '.gitignore'))
 
   success({ path, dest })
 }
