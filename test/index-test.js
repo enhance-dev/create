@@ -1,12 +1,10 @@
 import { execSync } from 'node:child_process'
 import { readdirSync, readFileSync } from 'node:fs'
-import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import { join, dirname } from 'node:path'
 import test from 'tape'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const require = createRequire(import.meta.url)
 const TEST_APP_NAME = 'test-app'
 const EXPECTED_FILES = [
   'app',
@@ -41,7 +39,7 @@ test('vendor-template.sh', (t) => {
 
 // run index.js in subprocess with path arg
 test('index.js', (t) => {
-  t.plan(6)
+  t.plan(5)
 
   const stdout = execSync(`node index.js test/${TEST_APP_NAME}`).toString()
   t.ok(stdout.includes('cd test/test-app'), 'index.js ran')
@@ -53,10 +51,10 @@ test('index.js', (t) => {
   )
 
   // verify output in test/test-app/
-  const pkg = require(`./${TEST_APP_NAME}/package.json`)
-  t.equal(pkg.name, TEST_APP_NAME, 'package: name is correct')
-  t.equal(pkg.version, '0.0.1', 'package: version is correct')
-  t.notOk(pkg.scripts['postinstall'], 'package: no postinstall')
+  let pkg = readFileSync(join(here, TEST_APP_NAME, 'package.json'), 'utf8').toString()
+  pkg = JSON.parse(pkg)
+  t.equal(pkg['name'], TEST_APP_NAME, 'package: name is correct')
+  t.equal(pkg['version'], '0.0.1', 'package: version is correct')
 
   const arcFile = readFileSync(join(here, TEST_APP_NAME, '.arc'), 'utf8').toString()
   t.ok(arcFile.indexOf(`@app\n${TEST_APP_NAME}`) === 0, 'arc: app name is correct')

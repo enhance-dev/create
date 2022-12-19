@@ -30,7 +30,6 @@ try {
 
   const pkgFile = require(join(dest, 'package.json'))
   pkgFile.name = appName
-  pkgFile.version = '0.0.1'
   const newPkgFile = Object.assign(
     {
       name: null,

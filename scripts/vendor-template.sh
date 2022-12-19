@@ -13,11 +13,11 @@ mv template/template.gitignore template/.gitignore
 
 # clean package.json
 node -p "
-const pkg = require('./template/package.json')
-delete pkg.name
-delete pkg.version
-delete pkg.scripts.postinstall
-JSON.stringify(pkg, null, 2)" > template/new-package.json
+JSON.stringify({
+  ...require('./template/package.json'),
+  name: undefined,
+  version: '0.0.1',
+}, null, 2)" > template/new-package.json
 
 mv template/new-package.json template/package.json
 
