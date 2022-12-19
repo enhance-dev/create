@@ -58,7 +58,7 @@ test('index.js', (t) => {
   t.equal(pkg.version, '0.0.1', 'package: version is correct')
   t.notOk(pkg.scripts['postinstall'], 'package: no postinstall')
 
-  const arcFile = readFileSync(join(here, TEST_APP_NAME, `.arc`), 'utf8').toString()
+  const arcFile = readFileSync(join(here, TEST_APP_NAME, '.arc'), 'utf8').toString()
   t.ok(arcFile.indexOf(`@app\n${TEST_APP_NAME}`) === 0, 'arc: app name is correct')
 })
 
