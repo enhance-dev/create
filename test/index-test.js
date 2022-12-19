@@ -12,7 +12,7 @@ const EXPECTED_FILES = [
   'app',
   'public',
   '.arc',
-  // '.gitignore', // TODO: add
+  '.gitignore',
   'package.json',
   'prefs.arc',
 ].sort()

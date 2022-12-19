@@ -4,6 +4,7 @@ rm -rf template # in case it exists
 cp -r node_modules/@enhance/starter-project template
 
 # Remove files/folders we don't need
+rm template/manifest.json
 rm template/readme.md
 rm template/LICENSE
 
