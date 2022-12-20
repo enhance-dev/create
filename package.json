@@ -1,14 +1,25 @@
 {
   "name": "@enhance/create",
   "version": "2.3.0",
-  "main": "index.mjs",
+  "main": "index.js",
+  "type": "module",
+  "files": [
+    "index.js",
+    "console.js",
+    "template"
+  ],
   "scripts": {
-    "vendor": "./scripts/vendor.sh"
+    "test": "tape test/*-test.js | tap-arc",
+    "vendor": "./scripts/vendor-template.sh"
   },
   "bin": {
-    "enhance-create": "./index.mjs"
+    "enhance-create": "./index.js"
   },
   "dependencies": {
-    "@enhance/starter-project": "^3.3.1"
+    "@enhance/starter-project": "^3.3.2"
+  },
+  "devDependencies": {
+    "tap-arc": "^0.3.5",
+    "tape": "^5.6.1"
   }
 }
