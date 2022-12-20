@@ -3,6 +3,11 @@
   "version": "2.3.0",
   "main": "index.js",
   "type": "module",
+  "files": [
+    "index.js",
+    "console.js",
+    "template"
+  ],
   "scripts": {
     "test": "tape test/*-test.js | tap-arc",
     "vendor": "./scripts/vendor-template.sh"
