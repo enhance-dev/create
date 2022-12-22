@@ -16,7 +16,7 @@
     "enhance-create": "./index.js"
   },
   "dependencies": {
-    "@enhance/starter-project": "^3.3.2"
+    "@enhance/starter-project": "^3.3.3"
   },
   "devDependencies": {
     "tap-arc": "^0.3.5",
