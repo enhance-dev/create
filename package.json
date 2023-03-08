@@ -3,6 +3,9 @@
   "version": "2.4.5",
   "main": "index.js",
   "type": "module",
+  "engines": {
+    "node": ">=16.7"
+  },
   "files": [
     "index.js",
     "console.js",
