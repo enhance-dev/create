@@ -6,13 +6,20 @@ import test from 'tape'
 
 const here = dirname(fileURLToPath(import.meta.url))
 const TEST_APP_NAME = 'test-app'
-const EXPECTED_FILES = [
+const BASE_FILES = [
   'app',
   'public',
   '.arc',
-  '.gitignore',
   'package.json',
   'prefs.arc',
+].sort()
+const TEMPLATE_FILES = [
+  'template.gitignore',
+  ...BASE_FILES
+].sort()
+const EXPECTED_FILES = [
+  '.gitignore',
+  ...BASE_FILES
 ].sort()
 
 function cleanup() {
@@ -32,7 +39,7 @@ test('vendor-template.sh', (t) => {
   // verify output in template/
   t.deepEqual(
     readdirSync('template'),
-    EXPECTED_FILES,
+    TEMPLATE_FILES,
     'template file structure is correct'
   )
 })

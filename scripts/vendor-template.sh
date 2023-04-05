@@ -8,9 +8,6 @@ rm template/manifest.json
 rm template/readme.md
 rm template/LICENSE
 
-# rename gitignore template
-mv template/template.gitignore template/.gitignore
-
 # clean package.json
 node -p "
 JSON.stringify({

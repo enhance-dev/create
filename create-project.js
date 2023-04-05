@@ -1,4 +1,4 @@
-import { cpSync, existsSync, readFileSync, writeFileSync } from 'node:fs'
+import { cpSync, existsSync, readFileSync, renameSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -14,6 +14,8 @@ export function createProject ({ dest, path }) {
     }
 
     cpSync(template, dest, { recursive: true })
+
+    renameSync(join(dest, 'template.gitignore'), join(dest, '.gitignore'))
 
     const pkgFile = require(join(dest, 'package.json'))
     pkgFile.name = appName
