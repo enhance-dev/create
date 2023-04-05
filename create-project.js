@@ -3,11 +3,11 @@ import { createRequire } from 'node:module'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-export function createProject ({ dest, path }) {
+export function createProject ({ dest, path, name }) {
     const require = createRequire(import.meta.url)
     const here = dirname(fileURLToPath(import.meta.url))
     const template = join(here, 'template')
-    const appName = path.trim().split('/').at(-1) || 'my-enhance-app'
+    const appName = name || path.trim().split('/').at(-1) || 'my-enhance-app'
 
     if (existsSync(dest)) {
         throw Error('Path already exists.')

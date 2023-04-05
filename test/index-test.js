@@ -5,7 +5,8 @@ import { join, dirname } from 'node:path'
 import test from 'tape'
 
 const here = dirname(fileURLToPath(import.meta.url))
-const TEST_APP_NAME = 'test-app'
+const TEST_APP_NAME = 'test-name'
+const TEST_APP_PATH = 'test-app'
 const BASE_FILES = [
   'app',
   'public',
@@ -23,7 +24,16 @@ const EXPECTED_FILES = [
 ].sort()
 
 function cleanup() {
-  execSync('rm -rf template test/test-app')
+  cleanTemplate()
+  cleanProj()
+}
+
+function cleanTemplate() {
+  execSync('rm -rf template')
+}
+
+function cleanProj() {
+  execSync('rm -rf test/test-app')
 }
 
 test('setup', (t) => {
@@ -48,23 +58,52 @@ test('vendor-template.sh', (t) => {
 test('index.js', (t) => {
   t.plan(5)
 
-  const stdout = execSync(`node index.js test/${TEST_APP_NAME}`).toString()
+  const stdout = execSync(`node index.js test/${TEST_APP_PATH}`).toString()
   t.ok(stdout.includes('cd test/test-app'), 'index.js ran')
 
   t.deepEqual(
-    readdirSync(join(here, TEST_APP_NAME)),
+    readdirSync(join(here, TEST_APP_PATH)),
     EXPECTED_FILES,
     'new app file structure is correct'
   )
 
   // verify output in test/test-app/
-  let pkg = readFileSync(join(here, TEST_APP_NAME, 'package.json'), 'utf8').toString()
+  let pkg = readFileSync(join(here, TEST_APP_PATH, 'package.json'), 'utf8').toString()
+  pkg = JSON.parse(pkg)
+  t.equal(pkg['name'], TEST_APP_PATH, 'package: name is correct')
+  t.equal(pkg['version'], '0.0.1', 'package: version is correct')
+
+  const arcFile = readFileSync(join(here, TEST_APP_PATH, '.arc'), 'utf8').toString()
+  t.ok(arcFile.indexOf(`@app\n${TEST_APP_PATH}`) === 0, 'arc: app name is correct')
+  t.teardown(() => {
+    cleanProj()
+  })
+})
+
+// run create-project.js in subprocess with path and name args
+test('index.js', async (t) => {
+  t.plan(4)
+
+  let { createProject } = await import('../create-project.js')
+  createProject({ path: `test/${TEST_APP_PATH}`, dest: join(process.cwd(), `test/${TEST_APP_PATH}`), name: TEST_APP_NAME })
+
+  t.deepEqual(
+    readdirSync(join(here, TEST_APP_PATH)),
+    EXPECTED_FILES,
+    'new app file structure is correct'
+  )
+
+  // verify output in test/test-app/
+  let pkg = readFileSync(join(here, TEST_APP_PATH, 'package.json'), 'utf8').toString()
   pkg = JSON.parse(pkg)
   t.equal(pkg['name'], TEST_APP_NAME, 'package: name is correct')
   t.equal(pkg['version'], '0.0.1', 'package: version is correct')
 
-  const arcFile = readFileSync(join(here, TEST_APP_NAME, '.arc'), 'utf8').toString()
+  const arcFile = readFileSync(join(here, TEST_APP_PATH, '.arc'), 'utf8').toString()
   t.ok(arcFile.indexOf(`@app\n${TEST_APP_NAME}`) === 0, 'arc: app name is correct')
+  t.teardown(() => {
+    cleanProj()
+  })
 })
 
 test.onFinish(() => {
