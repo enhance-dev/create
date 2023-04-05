@@ -9,6 +9,7 @@
   "files": [
     "index.js",
     "console.js",
+    "create-project.js",
     "template"
   ],
   "scripts": {
