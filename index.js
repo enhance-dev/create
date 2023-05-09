@@ -16,7 +16,7 @@ if (!path) {
 const dest = join(process.cwd(), path)
 
 try {
-  createProject({ path, dest })
+  await createProject({ path, dest })
   success({ path, dest })
 }
 catch (e) {
