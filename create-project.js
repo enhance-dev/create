@@ -1,7 +1,7 @@
 import { createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
-import { join, resolve } from 'node:path'
+import { isAbsolute, join, resolve } from 'node:path'
 import https from 'node:https'
 import tiny from 'tiny-json-http'
 import tar from 'tar'
@@ -16,7 +16,7 @@ export async function createProject ({ dest, path, name }) {
     const starterProjectArchive = join(temp, 'starter.tgz')
 
     // Project folder
-    const projectDir = resolve(dest)
+    const projectDir = isAbsolute(dest) ? dest : resolve(dest)
     if (existsSync(projectDir)) {
         throw Error('Path already exists.')
     }

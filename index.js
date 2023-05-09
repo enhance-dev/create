@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // executed in userland
 import process from 'node:process'
-import { join } from 'node:path'
+import { resolve } from 'node:path'
 
 import { failure, success } from './console.js'
 import { createProject } from './create-project.js'
@@ -13,7 +13,7 @@ if (!path) {
   throw Error('Missing path. Pass a pathname to create a new project.')
 }
 
-const dest = join(process.cwd(), path)
+const dest = resolve(process.cwd(), path)
 
 try {
   await createProject({ path, dest })
