@@ -41,19 +41,6 @@ test('setup', (t) => {
   t.end()
 })
 
-test('vendor-template.sh', (t) => {
-  t.plan(2)
-  const stdout = execSync('scripts/vendor-template.sh').toString()
-  t.ok(stdout.includes('Vendored'), 'vendor-template.sh ran')
-
-  // verify output in template/
-  t.deepEqual(
-    readdirSync('template'),
-    TEMPLATE_FILES,
-    'template file structure is correct'
-  )
-})
-
 // run index.js in subprocess with path arg
 test('index.js', (t) => {
   t.plan(5)
@@ -85,7 +72,7 @@ test('index.js', async (t) => {
   t.plan(4)
 
   let { createProject } = await import('../create-project.js')
-  createProject({ path: `test/${TEST_APP_PATH}`, dest: join(process.cwd(), `test/${TEST_APP_PATH}`), name: TEST_APP_NAME })
+  await createProject({ path: `test/${TEST_APP_PATH}`, dest: join(process.cwd(), `test/${TEST_APP_PATH}`), name: TEST_APP_NAME })
 
   t.deepEqual(
     readdirSync(join(here, TEST_APP_PATH)),

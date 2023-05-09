@@ -37,10 +37,13 @@ export async function createProject ({ dest, path, name }) {
         // Move starter project to final destination
         renameSync(join(temp, 'package'), projectDir)
         // Clean up download
-        unlinkSync(starterProjectArchive)
+
 
         // Update the starter project with your appName
         renameSync(join(projectDir, 'template.gitignore'), join(projectDir, '.gitignore'))
+        unlinkSync(join(projectDir, 'LICENSE'))
+        unlinkSync(join(projectDir, 'manifest.json'))
+        unlinkSync(join(projectDir, 'readme.md'))
         updatePackageJson(dest, appName)
         updateArcFile(dest, appName)
     } catch (err) {
@@ -52,6 +55,7 @@ function updatePackageJson(dest, appName) {
     const require = createRequire(import.meta.url)
     const pkgFile = require(join(dest, 'package.json'))
     pkgFile.name = appName
+    pkgFile.version = '0.0.1'
     const newPkgFile = Object.assign({
             name: null,
             version: null,
