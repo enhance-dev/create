@@ -1,15 +1,13 @@
-import { createWriteStream,  existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
+import { createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
-import { dirname, join, resolve } from 'node:path'
-import { fileURLToPath } from 'node:url'
+import { join, resolve } from 'node:path'
 import https from 'node:https'
 import tiny from 'tiny-json-http'
 import tar from 'tar'
 import { v4 as uuidv4 } from 'uuid';
 
 export async function createProject ({ dest, path, name }) {
-    const here = dirname(fileURLToPath(import.meta.url))
     const appName = name || path.trim().split('/').at(-1) || 'my-enhance-app'
 
     // Download folder
@@ -37,7 +35,7 @@ export async function createProject ({ dest, path, name }) {
         // Move starter project to final destination
         renameSync(join(temp, 'package'), projectDir)
         // Clean up download
-
+        unlinkSync(starterProjectArchive)
 
         // Update the starter project with your appName
         renameSync(join(projectDir, 'template.gitignore'), join(projectDir, '.gitignore'))
@@ -73,8 +71,8 @@ function updatePackageJson(dest, appName) {
 
 function updateArcFile(dest, appName) {
     const arcFile = readFileSync(join(dest, '.arc'), 'utf8')
-    .toString()
-    .replace('myproj', appName)
+        .toString()
+        .replace('myproj', appName)
 
     writeFileSync(join(dest, '.arc'), arcFile)
 }
