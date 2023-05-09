@@ -57,10 +57,6 @@ jobs:
       - name: Install dependencies
         run: npm i
 
-      # run vendor script
-      - name: Vendor in enhance-starter-project
-        run: npm run vendor
-
       # Publish to npm
       - name: Publish @RC to npm
         if: contains(github.ref, 'RC')

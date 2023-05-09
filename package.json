@@ -9,12 +9,10 @@
   "files": [
     "index.js",
     "console.js",
-    "create-project.js",
-    "template"
+    "create-project.js"
   ],
   "scripts": {
-    "test": "tape test/*-test.js | tap-arc",
-    "vendor": "./scripts/vendor-template.sh"
+    "test": "tape test/*-test.js | tap-arc"
   },
   "bin": {
     "enhance-create": "./index.js"
