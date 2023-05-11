@@ -7,6 +7,8 @@ import https from 'node:https'
 import tiny from 'tiny-json-http'
 import tar from 'tar'
 
+const require = createRequire(import.meta.url)
+
 export async function createProject ({ dest, path, name }) {
     const appName = name || path.trim().split('/').at(-1) || 'my-enhance-app'
 
@@ -22,10 +24,8 @@ export async function createProject ({ dest, path, name }) {
     }
 
     try {
-        // Get url to latest starter project
-        const { body } = await tiny.get({url: 'https://registry.npmjs.org/@enhance/starter-project'})
-        const latestVer = body['dist-tags'].latest
-        const latestUrl = body.versions[latestVer].dist.tarball
+        // Get tarball url
+        const latestUrl = await computeTarballUrl()
 
         // Download the starter project
         await downloadStarterProject(latestUrl, starterProjectArchive)
@@ -45,12 +45,12 @@ export async function createProject ({ dest, path, name }) {
         updatePackageJson(dest, appName)
         updateArcFile(dest, appName)
     } catch (err) {
+        console.log(err)
         throw Error('Unable to create project', err)
     }
 }
 
 function updatePackageJson(dest, appName) {
-    const require = createRequire(import.meta.url)
     const pkgFile = require(join(dest, 'package.json'))
     pkgFile.name = appName
     pkgFile.version = '0.0.1'
@@ -90,4 +90,23 @@ async function downloadStarterProject(url, dest) {
             reject(err)
         })
     })
+}
+
+async function computeTarballUrl() {
+    // Get url to latest starter project
+    const { body } = await tiny.get({url: 'https://registry.npmjs.org/@enhance/starter-project'})
+
+    // Need to pin major version set in package.json
+    const { starterProjectVersion } = require('./package.json')
+
+    // get keys from body.version
+    const latestVer = body['dist-tags'].latest
+    const version = Object.keys(body.versions).reduce(
+        (accumulator, currentValue) => {
+            let major = currentValue.split('.')[0]
+            return major <= starterProjectVersion ? currentValue : accumulator
+        },
+        latestVer
+    )
+    return body.versions[version].dist.tarball
 }
