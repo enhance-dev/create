@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
 import { tmpdir } from 'node:os'
@@ -5,13 +6,12 @@ import { isAbsolute, join, resolve } from 'node:path'
 import https from 'node:https'
 import tiny from 'tiny-json-http'
 import tar from 'tar'
-import { v4 as uuidv4 } from 'uuid';
 
 export async function createProject ({ dest, path, name }) {
     const appName = name || path.trim().split('/').at(-1) || 'my-enhance-app'
 
     // Download folder
-    const temp = join(tmpdir(), uuidv4())
+    const temp = join(tmpdir(), randomUUID())
     mkdirSync(temp)
     const starterProjectArchive = join(temp, 'starter.tgz')
 
