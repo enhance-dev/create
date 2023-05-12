@@ -1,16 +1,22 @@
-import { randomUUID } from 'node:crypto';
-import { createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'node:fs'
-import { createRequire } from 'node:module'
-import { tmpdir } from 'node:os'
-import { isAbsolute, join, resolve } from 'node:path'
-import https from 'node:https'
+import { randomUUID } from 'crypto';
+import { createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'fs'
+import { createRequire } from 'module'
+import { tmpdir } from 'os'
+import { isAbsolute, join, resolve } from 'path'
+import https from 'https'
 import tiny from 'tiny-json-http'
 import tar from 'tar'
 
 const require = createRequire(import.meta.url)
 
 export async function createProject ({ dest, path, name }) {
-    const appName = name || path.trim().split('/').at(-1) || 'my-enhance-app'
+    let appName = 'my-enhance-app'
+    if (name) {
+        appName = name
+    } else if (path) {
+        const parts = path.trim().split('/')
+        appName = parts[parts.length - 1]
+    }
 
     // Download folder
     const temp = join(tmpdir(), randomUUID())

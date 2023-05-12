@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // executed in userland
-import process from 'node:process'
-import { resolve } from 'node:path'
+import process from 'process'
+import { resolve } from 'path'
 
 import { failure, success } from './console.js'
 import { createProject } from './create-project.js'

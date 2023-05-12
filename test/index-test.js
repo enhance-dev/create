@@ -1,7 +1,7 @@
-import { execSync } from 'node:child_process'
-import { readdirSync, readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { join, dirname } from 'node:path'
+import { execSync } from 'child_process'
+import { readdirSync, readFileSync } from 'fs'
+import { fileURLToPath } from 'url'
+import { join, dirname } from 'path'
 import test from 'tape'
 
 const here = dirname(fileURLToPath(import.meta.url))

@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "engines": {
-    "node": ">=16.7"
+    "node": ">=14"
   },
   "files": [
     "index.js",
