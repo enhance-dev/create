@@ -7,6 +7,7 @@ import test from 'tape'
 const here = dirname(fileURLToPath(import.meta.url))
 const TEST_APP_NAME = 'test-name'
 const TEST_APP_PATH = 'test-app'
+const TEST_APP_PATH_INVALID_NAME = 'Test-App'
 const BASE_FILES = [
   'app',
   'public',
@@ -67,6 +68,22 @@ test('index.js', (t) => {
   })
 })
 
+// run index.js in subprocess with path arg that generates invalid name
+test('index.js', (t) => {
+  t.plan(1)
+
+  try {
+    execSync(`node index.js test/${TEST_APP_PATH_INVALID_NAME}`).toString()
+  } catch (err) {
+    const stdout = err.stdout.toString()
+    t.ok(stdout.includes('Invalid app name'), 'index.js did not run')
+  }
+
+  t.teardown(() => {
+    cleanProj()
+  })
+})
+
 // run create-project.js in subprocess with path and name args
 test('index.js', async (t) => {
   t.plan(4)
@@ -76,6 +93,36 @@ test('index.js', async (t) => {
 
   t.deepEqual(
     readdirSync(join(here, TEST_APP_PATH)),
+    EXPECTED_FILES,
+    'new app file structure is correct'
+  )
+
+  // verify output in test/test-app/
+  let pkg = readFileSync(join(here, TEST_APP_PATH, 'package.json'), 'utf8').toString()
+  pkg = JSON.parse(pkg)
+  t.equal(pkg['name'], TEST_APP_NAME, 'package: name is correct')
+  t.equal(pkg['version'], '0.0.1', 'package: version is correct')
+
+  const arcFile = readFileSync(join(here, TEST_APP_PATH, '.arc'), 'utf8').toString()
+  t.ok(arcFile.indexOf(`@app\n${TEST_APP_NAME}`) === 0, 'arc: app name is correct')
+  t.teardown(() => {
+    cleanProj()
+  })
+})
+
+test.onFinish(() => {
+  cleanup()
+})
+
+// run create-project.js in subprocess with path and name args
+test('index.js', async (t) => {
+  t.plan(4)
+
+  let { createProject } = await import('../create-project.js')
+  await createProject({ path: `test/${TEST_APP_PATH_INVALID_NAME}`, dest: join(process.cwd(), `test/${TEST_APP_PATH_INVALID_NAME}`), name: TEST_APP_NAME })
+
+  t.deepEqual(
+    readdirSync(join(here, TEST_APP_PATH_INVALID_NAME)),
     EXPECTED_FILES,
     'new app file structure is correct'
   )

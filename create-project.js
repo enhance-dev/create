@@ -10,12 +10,17 @@ import tar from 'tar'
 const require = createRequire(import.meta.url)
 
 export async function createProject ({ dest, path, name }) {
+    let looseName = /^[a-z][a-zA-Z0-9-_]+$/
     let appName = 'my-enhance-app'
     if (name) {
         appName = name
     } else if (path) {
         const parts = path.trim().split('/')
         appName = parts[parts.length - 1]
+    }
+
+    if (!looseName.test(appName)) {
+        throw Error('Invalid app name')
     }
 
     // Download folder
