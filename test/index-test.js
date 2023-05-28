@@ -128,12 +128,12 @@ test('index.js', async (t) => {
   )
 
   // verify output in test/test-app/
-  let pkg = readFileSync(join(here, TEST_APP_PATH, 'package.json'), 'utf8').toString()
+  let pkg = readFileSync(join(here, TEST_APP_PATH_INVALID_NAME, 'package.json'), 'utf8').toString()
   pkg = JSON.parse(pkg)
   t.equal(pkg['name'], TEST_APP_NAME, 'package: name is correct')
   t.equal(pkg['version'], '0.0.1', 'package: version is correct')
 
-  const arcFile = readFileSync(join(here, TEST_APP_PATH, '.arc'), 'utf8').toString()
+  const arcFile = readFileSync(join(here, TEST_APP_PATH_INVALID_NAME, '.arc'), 'utf8').toString()
   t.ok(arcFile.indexOf(`@app\n${TEST_APP_NAME}`) === 0, 'arc: app name is correct')
   t.teardown(() => {
     cleanProj()
