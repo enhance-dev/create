@@ -4,7 +4,7 @@
 Create an Enhance project with `npm`.
 
 ```bash
-npx create "@enhance@latest" my-project
+npx create "@enhance/create@latest" my-project
 ```
 
 Learn more at [enhance.dev](https://enhance.dev).
