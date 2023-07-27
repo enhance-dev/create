@@ -1,11 +1,14 @@
 import { randomUUID } from 'crypto';
 import { createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'fs'
+import fsExtra from 'fs-extra'
 import { createRequire } from 'module'
 import { tmpdir } from 'os'
-import { isAbsolute, join, resolve } from 'path'
+import { isAbsolute, join, resolve, parse } from 'path'
 import https from 'https'
 import tiny from 'tiny-json-http'
 import tar from 'tar'
+
+const { copySync } = fsExtra;
 
 const require = createRequire(import.meta.url)
 
@@ -43,8 +46,21 @@ export async function createProject ({ dest, path, name }) {
 
         // Extract starter project
         tar.x({ C: temp, file: starterProjectArchive, sync: true })
+        
         // Move starter project to final destination
-        renameSync(join(temp, 'package'), projectDir)
+        
+        // Check if the temp and projectDir are on the same file system
+        const tempRoot = parse(temp).root;
+        const projectRoot = parse(projectDir).root;
+        const isSameFileSystemRoot = tempRoot === projectRoot;
+
+        if (!isSameFileSystemRoot) {
+            // if not, we need to copy the files instead of moving them
+            copySync(join(temp, 'package'), projectDir)
+        } else {
+            renameSync(join(temp, 'package'), projectDir)
+        }
+
         // Clean up download
         unlinkSync(starterProjectArchive)
 
