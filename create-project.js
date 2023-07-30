@@ -54,7 +54,7 @@ export async function createProject ({ dest, path, name }) {
 
         if (!isSameFileSystemRoot) {
             // if not, we need to copy the files instead of moving them
-            cpSync(packageDir, projectDir, {recursive:true})
+            cpSync(packageDir, projectDir, { recursive: true })
             rmSync(packageDir, { recursive: true })
         } else {
             renameSync(packageDir, projectDir)
