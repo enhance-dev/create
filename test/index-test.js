@@ -1,5 +1,5 @@
 import { execSync } from 'child_process'
-import { readdirSync, readFileSync } from 'fs'
+import { readdirSync, readFileSync, rmSync } from 'fs'
 import { fileURLToPath } from 'url'
 import { join, dirname } from 'path'
 import test from 'tape'
@@ -30,11 +30,11 @@ function cleanup() {
 }
 
 function cleanTemplate() {
-  execSync('rm -rf template')
+  rmSync('template', { recursive: true, force: true })
 }
 
 function cleanProj() {
-  execSync('rm -rf test/test-app')
+  rmSync('test/test-app', { recursive: true, force: true })
 }
 
 test('setup', (t) => {
