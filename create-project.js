@@ -1,14 +1,11 @@
-import { randomUUID } from 'crypto';
-import { createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync } from 'fs'
-import fsExtra from 'fs-extra'
+import { randomUUID } from 'crypto'
+import { createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync, cpSync, rmSync } from 'fs'
 import { createRequire } from 'module'
 import { tmpdir } from 'os'
 import { isAbsolute, join, resolve, parse } from 'path'
 import https from 'https'
 import tiny from 'tiny-json-http'
 import tar from 'tar'
-
-const { copySync } = fsExtra;
 
 const require = createRequire(import.meta.url)
 
@@ -50,15 +47,17 @@ export async function createProject ({ dest, path, name }) {
         // Move starter project to final destination
         
         // Check if the temp and projectDir are on the same file system
-        const tempRoot = parse(temp).root;
-        const projectRoot = parse(projectDir).root;
-        const isSameFileSystemRoot = tempRoot === projectRoot;
+        const tempRoot = parse(temp).root
+        const projectRoot = parse(projectDir).root
+        const isSameFileSystemRoot = tempRoot === projectRoot
+        const packageDir = join(temp, 'package')
 
         if (!isSameFileSystemRoot) {
             // if not, we need to copy the files instead of moving them
-            copySync(join(temp, 'package'), projectDir)
+            cpSync(packageDir, projectDir, {recursive:true})
+            rmSync(packageDir, { recursive: true })
         } else {
-            renameSync(join(temp, 'package'), projectDir)
+            renameSync(packageDir, projectDir)
         }
 
         // Clean up download
