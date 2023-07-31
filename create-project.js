@@ -1,5 +1,5 @@
 import { randomUUID } from 'crypto'
-import { createWriteStream, existsSync, mkdirSync, readFileSync, renameSync, unlinkSync, writeFileSync, cpSync, rmSync } from 'fs'
+import { accessSync, createWriteStream, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync, rmSync } from 'fs'
 import { createRequire } from 'module'
 import { tmpdir } from 'os'
 import { isAbsolute, join, resolve, parse } from 'path'
@@ -43,9 +43,9 @@ export async function createProject ({ dest, path, name }) {
 
         // Extract starter project
         tar.x({ C: temp, file: starterProjectArchive, sync: true })
-        
+
         // Move starter project to final destination
-        
+
         // Check if the temp and projectDir are on the same file system
         const tempRoot = parse(temp).root
         const projectRoot = parse(projectDir).root
@@ -54,7 +54,7 @@ export async function createProject ({ dest, path, name }) {
 
         if (!isSameFileSystemRoot) {
             // if not, we need to copy the files instead of moving them
-            cpSync(packageDir, projectDir, { recursive: true })
+            copySync(packageDir, projectDir)
             rmSync(packageDir, { recursive: true })
         } else {
             renameSync(packageDir, projectDir)
@@ -135,4 +135,32 @@ async function computeTarballUrl() {
         latestVer
     )
     return body.versions[version].dist.tarball
+}
+
+// When node 14 support is dropped switch to using `cpSync`
+function copySync(src, dest) {
+    const copy = (copySrc, copyDest) => {
+      const list = readdirSync(copySrc)
+      list.forEach((item) => {
+        const ss = resolve(copySrc, item)
+        const stat = statSync(ss)
+        const curSrc = resolve(copySrc, item)
+        const curDest = resolve(copyDest, item)
+
+        if (stat.isFile()) {
+          const fileData = readFileSync(curSrc)
+          writeFileSync(curDest, fileData)
+        } else if (stat.isDirectory()) {
+          mkdirSync(curDest, { recursive: true })
+          copy(curSrc, curDest)
+        }
+      })
+    }
+
+    try {
+      accessSync(dest)
+    } catch (err) {
+      mkdirSync(dest, { recursive: true })
+    }
+    copy(src, dest)
 }
