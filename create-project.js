@@ -45,20 +45,9 @@ export async function createProject ({ dest, path, name }) {
         tar.x({ C: temp, file: starterProjectArchive, sync: true })
 
         // Move starter project to final destination
-
-        // Check if the temp and projectDir are on the same file system
-        const tempRoot = parse(temp).root
-        const projectRoot = parse(projectDir).root
-        const isSameFileSystemRoot = tempRoot === projectRoot
         const packageDir = join(temp, 'package')
-
-        if (!isSameFileSystemRoot) {
-            // if not, we need to copy the files instead of moving them
-            copySync(packageDir, projectDir)
-            rmSync(packageDir, { recursive: true })
-        } else {
-            renameSync(packageDir, projectDir)
-        }
+        copySync(packageDir, projectDir)
+        rmSync(packageDir, { recursive: true })
 
         // Clean up download
         unlinkSync(starterProjectArchive)
