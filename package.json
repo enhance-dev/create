@@ -25,5 +25,5 @@
     "tar": "^6.1.14",
     "tiny-json-http": "^7.5.1"
   },
-  "starterProjectVersion": 5
+  "starterProjectVersion": 6
 }
