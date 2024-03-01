@@ -13,7 +13,6 @@ const BASE_FILES = [
   'public',
   '.arc',
   'package.json',
-  'prefs.arc',
 ].sort()
 const TEMPLATE_FILES = [
   'template.gitignore',
