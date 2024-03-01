@@ -1,11 +1,9 @@
-import { randomUUID } from 'crypto'
 import { createRequire } from 'module'
-import { tmpdir } from 'os'
 import { isAbsolute, join, resolve } from 'path'
 import fs from 'fs'
 import git from 'isomorphic-git'
 
-const { existsSync, lstatSync, mkdirSync, readFileSync, renameSync, rmSync, unlinkSync, writeFileSync } = fs
+const { existsSync, lstatSync, readFileSync, renameSync, rmSync, unlinkSync, writeFileSync } = fs
 
 const require = createRequire(import.meta.url)
 
@@ -33,10 +31,6 @@ export async function createProject ({ dest, path, name, template = STARTER_PROJ
         }
     }
 
-    // Download folder
-    const temp = join(tmpdir(), randomUUID())
-    mkdirSync(temp)
-
     // Project folder
     const projectDir = isAbsolute(dest) ? dest : resolve(dest)
     if (existsSync(projectDir)) {
@@ -52,16 +46,13 @@ async function createFromTemplate(projectDir, dest, appName, template) {
         // Clone the template project
         await git.clone({ fs, http, dir: projectDir, url: template })
 
+        // Remove git folders
+        remove(join(projectDir, '.git'))
+        remove(join(projectDir, '.github'))
+
+        // Clean up miscellaneous starter project files
         if (template === STARTER_PROJECT) {
-            renameSync(join(projectDir, 'template.gitignore'), join(projectDir, '.gitignore'))
-            remove(join(projectDir, '.git'))
-            remove(join(projectDir, '.github'))
-            remove(join(projectDir, '.npmignore'))
-            remove(join(projectDir, '.npmrc'))
-            remove(join(projectDir, 'LICENSE'))
-            remove(join(projectDir, 'manifest.json'))
-            remove(join(projectDir, 'readme.md'))
-            remove(join(projectDir, 'scripts'))
+            cleanStarterProject(projectDir)
         }
 
         updatePackageJson(dest, appName)
@@ -70,6 +61,16 @@ async function createFromTemplate(projectDir, dest, appName, template) {
         console.log(err)
         throw Error('Unable to create project', err)
     }
+}
+
+function cleanStarterProject(projectDir) {
+    renameSync(join(projectDir, 'template.gitignore'), join(projectDir, '.gitignore'))
+    remove(join(projectDir, '.npmignore'))
+    remove(join(projectDir, '.npmrc'))
+    remove(join(projectDir, 'LICENSE'))
+    remove(join(projectDir, 'manifest.json'))
+    remove(join(projectDir, 'readme.md'))
+    remove(join(projectDir, 'scripts'))
 }
 
 function remove(filePath) {

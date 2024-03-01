@@ -162,7 +162,22 @@ test('index.js', (t) => {
   try {
     execSync(`node index.js test/${TEST_APP_PATH} heck-nah`).toString()
   } catch (error) {
-    t.ok('bad template')
+    t.ok(true, 'bad template')
+  }
+
+  t.teardown(() => {
+    cleanProj()
+  })
+})
+
+// run index.js in subprocess with path and invalid template repo
+test('index.js', (t) => {
+  t.plan(1)
+
+  try {
+    execSync(`node index.js test/${TEST_APP_PATH} https://github.com/macdonst/read-it-to-me`).toString()
+  } catch (error) {
+    t.ok(true, 'bad template repo')
   }
 
   t.teardown(() => {
