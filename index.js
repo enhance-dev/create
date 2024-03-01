@@ -4,11 +4,11 @@ import process from 'process'
 import { resolve } from 'path'
 
 import { failure, success } from './console.js'
-import { createProject } from './create-project.js'
+import { createProject, STARTER_PROJECT } from './create-project.js'
 
 const args = process.argv.slice(2, process.argv.length)
 const path = args[0]
-const template = args[1] || null
+const template = args[1] || STARTER_PROJECT
 
 if (!path) {
   throw Error('Missing path. Pass a pathname to create a new project.')
