@@ -2,14 +2,14 @@ import { randomUUID } from 'crypto'
 import { accessSync, createWriteStream, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync, rmSync } from 'fs'
 import { createRequire } from 'module'
 import { tmpdir } from 'os'
-import { isAbsolute, join, resolve, parse } from 'path'
+import { isAbsolute, join, resolve } from 'path'
 import https from 'https'
 import tiny from 'tiny-json-http'
 import tar from 'tar'
 
 const require = createRequire(import.meta.url)
 
-export async function createProject ({ dest, path, name }) {
+export async function createProject ({ dest, path, name, template = null }) {
     let looseName = /^[a-z][a-zA-Z0-9-_]+$/
     let appName = 'my-enhance-app'
     if (name) {
@@ -34,8 +34,13 @@ export async function createProject ({ dest, path, name }) {
         throw Error('Path already exists.')
     }
 
+    if (!template) {
+        await createFromStarterProject(starterProjectArchive, temp, projectDir, dest, appName)
+    }
+}
+
+async function createFromStarterProject(starterProjectArchive, temp, projectDir, dest, appName) {
     try {
-        // Get tarball url
         const latestUrl = await computeTarballUrl()
 
         // Download the starter project
