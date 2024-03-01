@@ -8,6 +8,7 @@ import { createProject } from './create-project.js'
 
 const args = process.argv.slice(2, process.argv.length)
 const path = args[0]
+const template = args[1] || null
 
 if (!path) {
   throw Error('Missing path. Pass a pathname to create a new project.')
@@ -16,7 +17,7 @@ if (!path) {
 const dest = resolve(process.cwd(), path)
 
 try {
-  await createProject({ path, dest })
+  await createProject({ path, dest, template })
   success({ path, dest })
 }
 catch (e) {

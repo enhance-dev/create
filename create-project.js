@@ -1,11 +1,15 @@
 import { randomUUID } from 'crypto'
-import { accessSync, createWriteStream, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync, rmSync } from 'fs'
 import { createRequire } from 'module'
 import { tmpdir } from 'os'
 import { isAbsolute, join, resolve } from 'path'
 import https from 'https'
 import tiny from 'tiny-json-http'
 import tar from 'tar'
+import fs from 'fs'
+import git from 'isomorphic-git'
+// import url from 'url'
+
+const { accessSync, createWriteStream, existsSync, mkdirSync, readdirSync, readFileSync, renameSync, statSync, unlinkSync, writeFileSync, rmSync } = fs
 
 const require = createRequire(import.meta.url)
 
@@ -23,10 +27,17 @@ export async function createProject ({ dest, path, name, template = null }) {
         throw Error('Invalid app name')
     }
 
+    if (template) {
+        try {
+            new URL(template)
+        } catch (error) {
+            throw Error('Invalid template URL')
+        }
+    }
+
     // Download folder
     const temp = join(tmpdir(), randomUUID())
     mkdirSync(temp)
-    const starterProjectArchive = join(temp, 'starter.tgz')
 
     // Project folder
     const projectDir = isAbsolute(dest) ? dest : resolve(dest)
@@ -35,11 +46,28 @@ export async function createProject ({ dest, path, name, template = null }) {
     }
 
     if (!template) {
-        await createFromStarterProject(starterProjectArchive, temp, projectDir, dest, appName)
+        await createFromStarterProject(temp, projectDir, dest, appName)
+    } else {
+        await createFromTemplate(projectDir, dest, appName, template)
     }
 }
 
-async function createFromStarterProject(starterProjectArchive, temp, projectDir, dest, appName) {
+async function createFromTemplate(projectDir, dest, appName, template) {
+    const http = require('isomorphic-git/http/node')
+    try {
+        // Clone the template project
+        await git.clone({ fs, http, dir: projectDir, url: template })
+
+        updatePackageJson(dest, appName)
+        updateArcFile(dest, appName)
+    } catch (err) {
+        console.log(err)
+        throw Error('Unable to create project', err)
+    }
+}
+
+async function createFromStarterProject(temp, projectDir, dest, appName) {
+    const starterProjectArchive = join(temp, 'starter.tgz')
     try {
         const latestUrl = await computeTarballUrl()
 
