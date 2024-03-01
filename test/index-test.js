@@ -109,10 +109,6 @@ test('index.js', async (t) => {
   })
 })
 
-test.onFinish(() => {
-  cleanup()
-})
-
 // run create-project.js in subprocess with path and name args
 test('index.js', async (t) => {
   t.plan(4)
@@ -134,6 +130,56 @@ test('index.js', async (t) => {
 
   const arcFile = readFileSync(join(here, TEST_APP_PATH_INVALID_NAME, '.arc'), 'utf8').toString()
   t.ok(arcFile.indexOf(`@app\n${TEST_APP_NAME}`) === 0, 'arc: app name is correct')
+  t.teardown(() => {
+    cleanProj()
+  })
+})
+
+// run index.js in subprocess with path and template args
+test('index.js', (t) => {
+  t.plan(4)
+
+  const stdout = execSync(`node index.js test/${TEST_APP_PATH} https://github.com/enhance-dev/enhance-starter-project`).toString()
+  t.ok(stdout.includes('cd test/test-app'), 'index.js ran')
+
+  // verify output in test/test-app/
+  let pkg = readFileSync(join(here, TEST_APP_PATH, 'package.json'), 'utf8').toString()
+  pkg = JSON.parse(pkg)
+  t.equal(pkg['name'], TEST_APP_PATH, 'package: name is correct')
+  t.equal(pkg['version'], '0.0.1', 'package: version is correct')
+
+  const arcFile = readFileSync(join(here, TEST_APP_PATH, '.arc'), 'utf8').toString()
+  t.ok(arcFile.indexOf(`@app\n${TEST_APP_PATH}`) === 0, 'arc: app name is correct')
+  t.teardown(() => {
+    cleanProj()
+  })
+})
+
+// run index.js in subprocess with path and invalid template args
+test('index.js', (t) => {
+  t.plan(1)
+
+  try {
+    execSync(`node index.js test/${TEST_APP_PATH} heck-nah`).toString()
+  } catch (error) {
+    t.ok(true, 'bad template')
+  }
+
+  t.teardown(() => {
+    cleanProj()
+  })
+})
+
+// run index.js in subprocess with path and invalid template repo
+test('index.js', (t) => {
+  t.plan(1)
+
+  try {
+    execSync(`node index.js test/${TEST_APP_PATH} https://github.com/macdonst/read-it-to-me`).toString()
+  } catch (error) {
+    t.ok(true, 'bad template repo')
+  }
+
   t.teardown(() => {
     cleanProj()
   })
