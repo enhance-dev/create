@@ -58,7 +58,6 @@ async function createFromTemplate(projectDir, dest, appName, template) {
         updatePackageJson(dest, appName)
         updateArcFile(dest, appName)
     } catch (err) {
-        console.log(err)
         throw Error('Unable to create project', err)
     }
 }
