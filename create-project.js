@@ -9,7 +9,7 @@ import tar from 'tar'
 
 const require = createRequire(import.meta.url)
 
-export async function createProject ({ dest, path, name }) {
+export async function createProject ({ dest, path, name, starterProjectVersion = 9999 }) {
     let looseName = /^[a-z][a-zA-Z0-9-_]+$/
     let appName = 'my-enhance-app'
     if (name) {
@@ -36,7 +36,7 @@ export async function createProject ({ dest, path, name }) {
 
     try {
         // Get tarball url
-        const latestUrl = await computeTarballUrl()
+        const latestUrl = await computeTarballUrl(starterProjectVersion)
 
         // Download the starter project
         await downloadStarterProject(latestUrl, starterProjectArchive)
@@ -107,12 +107,9 @@ async function downloadStarterProject(url, dest) {
     })
 }
 
-async function computeTarballUrl() {
+async function computeTarballUrl(starterProjectVersion) {
     // Get url to latest starter project
     const { body } = await tiny.get({url: 'https://registry.npmjs.org/@enhance/starter-project'})
-
-    // Need to pin major version set in package.json
-    const { starterProjectVersion } = require('./package.json')
 
     // get keys from body.version
     const latestVer = body['dist-tags'].latest
