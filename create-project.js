@@ -2,6 +2,7 @@ import { createRequire } from 'module'
 import { isAbsolute, join, resolve } from 'path'
 import fs from 'fs'
 import git from 'isomorphic-git'
+import parse from '@architect/parser'
 
 const { existsSync, lstatSync, readFileSync, renameSync, rmSync, unlinkSync, writeFileSync } = fs
 
@@ -45,6 +46,11 @@ async function createFromTemplate(projectDir, dest, appName, template) {
     try {
         // Clone the template project
         await git.clone({ fs, http, dir: projectDir, url: template })
+
+        // Check
+        if (!existsSync(join(projectDir, '.arc')) && !existsSync(join(projectDir, 'app.arc')) ) {
+            throw Error('Invalid Enhance template')
+        }
 
         // Remove git folders
         remove(join(projectDir, '.git'))
@@ -102,9 +108,10 @@ function updatePackageJson(dest, appName) {
 }
 
 function updateArcFile(dest, appName) {
-    const arcFile = readFileSync(join(dest, '.arc'), 'utf8')
-        .toString()
-        .replace('myproj', appName)
+    const arcFilePath = existsSync(join(dest, '.arc')) ? join(dest, '.arc') : join(dest, 'app.arc')
+    const text = readFileSync(arcFilePath, 'utf8').toString()
+    const result = parse(text)
+    let arcFile = result.app.length === 1 && result.app[0] ? text.replace(result.app[0], appName) : text
 
-    writeFileSync(join(dest, '.arc'), arcFile)
+    writeFileSync(arcFilePath, arcFile)
 }
