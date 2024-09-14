@@ -12,6 +12,7 @@ const BASE_FILES = [
   'app',
   'public',
   '.arc',
+  'LICENSE.md',
   'package.json',
 ].sort()
 const TEMPLATE_FILES = [
