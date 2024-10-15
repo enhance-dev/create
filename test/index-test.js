@@ -177,6 +177,27 @@ test('index.js', (t) => {
   })
 })
 
+
+// run index.js in subprocess with path and `-y` template arg from `npx "@enhance/create@latest" ./myproject -y`
+test('index.js', (t) => {
+  t.plan(4)
+
+  const stdout = execSync(`node index.js test/${TEST_APP_PATH} -y`).toString()
+  t.ok(stdout.includes('cd test/test-app'), 'index.js ran')
+
+  // verify output in test/test-app/
+  let pkg = readFileSync(join(here, TEST_APP_PATH, 'package.json'), 'utf8').toString()
+  pkg = JSON.parse(pkg)
+  t.equal(pkg['name'], TEST_APP_PATH, 'package: name is correct')
+  t.equal(pkg['version'], '0.0.1', 'package: version is correct')
+
+  const arcFile = readFileSync(join(here, TEST_APP_PATH, '.arc'), 'utf8').toString()
+  t.ok(arcFile.indexOf(`@app\n${TEST_APP_PATH}`) === 0, 'arc: app name is correct')
+  t.teardown(() => {
+    cleanProj()
+  })
+})
+
 // run index.js in subprocess with path and invalid template args
 test('index.js', (t) => {
   t.plan(1)
